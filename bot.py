@@ -1,51 +1,29 @@
+# 導入 套件
 import discord
-from discord.ext import commands
 import os
 from dotenv import load_dotenv
-import asyncio
 
-# 取得环境设置
+# 取得環境設定
 load_dotenv()
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
-
-if DISCORD_TOKEN is None:
-    raise ValueError("DISCORD_TOKEN is not set in the .env file")
-
 # intents
 intents = discord.Intents.default()
-intents.message_content = True  # 新增要求读取消息权限
+intents.message_content = True  # NEW 新增要求讀取訊息權限 
+# client
+client = discord.Client(intents=intents)
 
-# bot
-bot = commands.Bot(command_prefix='!', intents=intents)
-
-# 打印当前工作目录
-print(f"Current working directory: {os.getcwd()}")
-
-# 打印 cogs 文件夹中的文件
-print("Files in cogs folder:")
-for filename in os.listdir("./cogs"):
-    print(filename)
-
-async def load_extensions():
-    # 加载 cog 文件
-    for filename in os.listdir("./cogs"):
-        if filename.endswith(".py"):
-            try:
-                await bot.load_extension(f"cogs.{filename[:-3]}")
-                print(f"Loaded extension: {filename}")
-            except Exception as e:
-                print(f"Failed to load extension {filename}: {e}")
-
-@bot.event
+# event 事件處理
+@client.event
 async def on_ready():
-    print(f"「{bot.user}」已登入")
-    print("注册的命令：")
-    for command in bot.commands:
-        print(command.name)
-
-async def main():
-    await load_extensions()
-    await bot.start(DISCORD_TOKEN)
+  print(f"「{client.user}」已登入")
+  
+@client.event
+async def on_message(message):
+  print(message) # 印出message 內容
+  if message.author == client.user: # 排除機器人本身的訊息
+    return
+  if message.content == 'ping':
+    await message.channel.send('pong')
 
 if __name__ == "__main__":
-    asyncio.run(main())
+  client.run(DISCORD_TOKEN)
