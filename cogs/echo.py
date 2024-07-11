@@ -12,8 +12,6 @@ class Echo(commands.Cog):
         await ctx.message.delete()
         await ctx.send(content)
 
-
-
 # Cog 載入 Bot 中
 async def setup(bot: commands.Bot):
     await bot.add_cog(Echo(bot))
