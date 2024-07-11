@@ -7,7 +7,7 @@ class Echo(commands.Cog):
         self.bot = bot
 
     # 前綴指令
-    @commands.command()
+    @commands.command(help="重複你的話 $echo <message>")
     async def echo(self, ctx: commands.Context, *, content: str):
         await ctx.message.delete()
         await ctx.send(content)
