@@ -18,6 +18,6 @@ class RandomReply(commands.Cog):
                 await message.channel.send("真的")
 
 async def setup(bot):
-    target_guild_id = 1164287811025911808  
+    target_guild_id = 917436845187563610
     target_word = "超好笑" 
     await bot.add_cog(RandomReply(bot, target_guild_id, target_word))
