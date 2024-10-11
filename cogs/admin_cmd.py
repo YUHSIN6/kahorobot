@@ -1,7 +1,12 @@
 import discord
+import os
+from dotenv import load_dotenv
 from discord.ext import commands
 
-ALLOWED_USERS = [468711293264855052]  # 在这里填入允许使用命令的用户ID
+load_dotenv()
+ID_6UC=os.getenv("ID_6UC")
+
+ALLOWED_USERS = [ID_6UC]  # 在这里填入允许使用命令的用户ID
 
 def is_allowed_user():
     async def predicate(ctx):

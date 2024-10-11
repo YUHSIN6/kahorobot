@@ -1,5 +1,10 @@
 import random
+import os
+from dotenv import load_dotenv
 from discord.ext import commands
+
+load_dotenv()
+target_server = os.getenv("Daigaku_server_ID")
 
 class RandomReply(commands.Cog):
     def __init__(self, bot: commands.Bot, target_guild_id: int, target_word: str):
@@ -18,6 +23,6 @@ class RandomReply(commands.Cog):
                 await message.channel.send("真的")
 
 async def setup(bot):
-    target_guild_id = 917436845187563610
+    target_guild_id = target_server
     target_word = "超好笑" 
     await bot.add_cog(RandomReply(bot, target_guild_id, target_word))
