@@ -9,6 +9,7 @@ class SlashCommands(commands.Cog):
     @app_commands.command(name="hi", description="Say hello to the bot")
     async def hi(self, interaction: discord.Interaction):
         await interaction.response.send_message("Hello, world!")
+        await self.bot.close()
 
 
 async def setup(bot):

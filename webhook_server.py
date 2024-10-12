@@ -5,6 +5,7 @@ import base64
 import logging
 import os
 from dotenv import load_dotenv
+import discord_bot
 
 app = Flask(__name__)
 
@@ -36,6 +37,7 @@ def webhook():
                 message = event['message']['text']
                 logging.info(f"Received message: {message}")
                 # 发送回覆逻辑
+                asyncio.run(discord_bot.bot.get_cog('Echo').on_line_message(message))
 
         return jsonify({'status': 'success'}), 200
     except Exception as e:
