@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 # 載入環境變數
 load_dotenv()
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
+ID_admin = os.getenv("ID_6UC")
 
 # 設置 Intents 和 Bot
 intents = discord.Intents.all()
@@ -14,7 +15,7 @@ intents.message_content = True
 bot = commands.Bot(command_prefix="$", intents=intents)
 
 # 允許使用命令的用戶ID
-ALLOWED_USERS = [468711293264855052]  # 替換為實際的 Discord 用戶 ID
+ALLOWED_USERS = [ID_admin]  # 替換為實際的 Discord 用戶 ID
 
 # 限定特定指令的裝飾器
 def is_allowed_user():
@@ -81,22 +82,18 @@ class CustomHelpCommand(commands.HelpCommand):
 # 設置自訂義幫助命令
 bot.help_command = CustomHelpCommand()
 
-# 定義名為 Echo 的 Cog
-class Echo(commands.Cog):
-    def __init__(self, bot: commands.Bot):
-        self.bot = bot
-
-    @commands.command(help="Echoes the message back to the channel.")
-    async def echo(self, ctx: commands.Context, *, content: str):
-        await ctx.message.delete()
-        await ctx.send(content)
-
 # 一開始bot開機需載入全部程式檔案
-async def load_extensions():
-    for filename in os.listdir("./cogs"):
-        if filename.endswith(".py"):
-            await bot.load_extension(f"cogs.{filename[:-3]}")
-            print(f"Loaded extension: {filename[:-3]}")
+async def load_extensions(bot):
+    for root, dirs, files in os.walk("./cogs"):
+        for filename in files:
+            if filename.endswith(".py"):
+                # 将文件路径转换为符合 Python 模块的格式
+                relative_path = os.path.relpath(os.path.join(root, filename), ".")
+                module_path = relative_path.replace(os.sep, ".")[:-3]
+                
+                # 加载扩展
+                await bot.load_extension(module_path)
+                print(f"Loaded extension: {module_path}")
 
 # 當機器人完成啟動時
 @bot.event
@@ -107,7 +104,7 @@ async def on_ready():
 # 確定執行此py檔才會執行
 async def main():
     async with bot:
-        await load_extensions()
+        await load_extensions(bot)
         await bot.start(DISCORD_TOKEN)
 
 if __name__ == "__main__":
