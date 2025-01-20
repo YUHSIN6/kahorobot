@@ -7,6 +7,7 @@ import os
 import asyncio
 from dotenv import load_dotenv
 from discord.ext import commands
+from cogs.line_connect.line_message import LineMessage
 import discord_bot  # 载入 Discord 机器人模块以便调用 Cog 的方法
 
 app = Flask(__name__)
@@ -37,11 +38,13 @@ def webhook():
             if event['type'] == 'message':
                 message = event['message']['text']
                 logging.info(f"Received message: {message}")
-                cog = discord_bot.get_cog("LineMessage")
-                logging.info(f"Loaded cogs: {discord_bot.bot.cogs.keys()}")
-                print(discord_bot.bot.cogs)
-                if cog:
-                        asyncio.create_task(cog.send_message_to_discord(message))
+
+
+                #cog = discord_bot.bot.get_cog("LineMessage")
+                #logging.info(f"Loaded cogs: {discord_bot.bot.cogs.keys()}")
+                #print(discord_bot.bot.cogs)
+                #if cog:
+                #        asyncio.create_task(cog.send_message_to_discord(message))
 
 
         return jsonify({'status': 'success'}), 200
