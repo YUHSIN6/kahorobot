@@ -4,8 +4,10 @@ import hashlib
 import base64
 import logging
 import os
+import asyncio
 from dotenv import load_dotenv
-import discord_bot
+from discord.ext import commands
+import discord_bot  # 载入 Discord 机器人模块以便调用 Cog 的方法
 
 app = Flask(__name__)
 
@@ -22,7 +24,7 @@ def webhook():
         signature = request.headers['X-Line-Signature']
         body = request.get_data(as_text=True)
         logging.info(f"Request body: {body}")
-        
+
         hash = hmac.new(CHANNEL_SECRET.encode('utf-8'), body.encode('utf-8'), hashlib.sha256).digest()
         valid_signature = base64.b64encode(hash).decode('utf-8')
 
@@ -33,11 +35,14 @@ def webhook():
         events = request.json['events']
         for event in events:
             if event['type'] == 'message':
-                reply_token = event['replyToken']
                 message = event['message']['text']
                 logging.info(f"Received message: {message}")
-                # 发送回覆逻辑
-                asyncio.run(discord_bot.bot.get_cog('Echo').on_line_message(message))
+                cog = discord_bot.get_cog("LineMessage")
+                logging.info(f"Loaded cogs: {discord_bot.bot.cogs.keys()}")
+                print(discord_bot.bot.cogs)
+                if cog:
+                        asyncio.create_task(cog.send_message_to_discord(message))
+
 
         return jsonify({'status': 'success'}), 200
     except Exception as e:

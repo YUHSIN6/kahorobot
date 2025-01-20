@@ -1,0 +1,71 @@
+import discord
+from discord.ext import commands
+import os
+from dotenv import load_dotenv
+
+# 允许使用命令的用户ID
+load_dotenv()
+
+ID_admin = os.getenv("ID_6UC")
+ALLOWED_USERS = [int(ID_admin)]   # 替换为实际的 Discord 用户 ID 列表
+
+class HelpCog(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    async def send_bot_help(self, mapping):
+        ctx = self.bot.context
+        user = ctx.author
+        
+        embed = discord.Embed(title="Bot Commands", description="Here are the available commands:", color=discord.Color.blue())
+
+        if user.id in ALLOWED_USERS:
+            # 显示所有指令
+            for cog, commands in mapping.items():
+                if cog:
+                    cog_name = cog.qualified_name
+                    command_list = [f"`{cmd.name}`: {cmd.help or 'No description'}" for cmd in commands if await cmd.can_run(ctx)]
+                    if command_list:
+                        embed.add_field(name=cog_name, value="\n".join(command_list), inline=False)
+        else:
+            # 显示有限的指令
+            for cog, commands in mapping.items():
+                if cog:
+                    cog_name = cog.qualified_name
+                    command_list = [f"`{cmd.name}`: {cmd.help or 'No description'}" for cmd in commands if await cmd.can_run(ctx)]
+                    if command_list:
+                        embed.add_field(name=cog_name, value="\n".join(command_list), inline=False)
+        
+        await ctx.send(embed=embed)
+
+    @commands.command(name="help")
+    async def help_command(self, ctx):
+        await self.send_bot_help(self.bot.cogs)
+
+    async def send_command_help(self, command):
+        ctx = self.bot.context
+        embed = discord.Embed(
+            title=f"Command: {command.name}",
+            description=command.help or "No description provided.",
+            color=discord.Color.green()
+        )
+        await ctx.send(embed=embed)
+
+    async def send_cog_help(self, cog):
+        ctx = self.bot.context
+        embed = discord.Embed(
+            title=f"Cog: {cog.qualified_name}",
+            description="Commands in this cog:",
+            color=discord.Color.orange()
+        )
+        command_list = [f"`{cmd.name}`: {cmd.help or 'No description'}" for cmd in cog.get_commands() if await cmd.can_run(ctx)]
+        if command_list:
+            embed.add_field(name=cog.qualified_name, value="\n".join(command_list), inline=False)
+        await ctx.send(embed=embed)
+
+    async def send_error_message(self, error):
+        await self.bot.context.send(error)
+
+# 确保这个函数是同步的，不需要 await
+def setup(bot):
+    bot.add_cog(HelpCog(bot))  
