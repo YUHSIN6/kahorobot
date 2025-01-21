@@ -1,11 +1,13 @@
 import discord
 from discord.ext import commands
+import os
 
+ID_admin = os.getenv("ID_6UC")
 # 定義名為 Reply 的 Cog
 class Reply(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.special_user_ids = [468711293264855052]
+        self.special_user_ids = [int(ID_admin)]
 
     # 當有人標註機器人時回復原消息
     @commands.Cog.listener()
