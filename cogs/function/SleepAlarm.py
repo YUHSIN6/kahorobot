@@ -1,5 +1,9 @@
 import discord
 from discord.ext import commands, tasks
+import os
+
+ID_6uc = os.getenv("ID_6UC")
+Channel_6uc = os.getenv("CHANNEL_6UC")
 
 class SleepAlarm(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -13,9 +17,9 @@ class SleepAlarm(commands.Cog):
         now = discord.utils.utcnow()  
         #print(f"Current UTC time: {now.hour}:{now.minute}")  
         if now.hour == 18 and now.minute == 00:
-            channel = self.bot.get_channel(960578682399903804)
+            channel = self.bot.get_channel(int(Channel_6uc))
             if channel:
-                user_id = 468711293264855052  
+                user_id = int(ID_6uc)  
                 user = self.bot.get_user(user_id)
                 if user:
                     await channel.send(f"<@{user.id}> 該去睡覺了！")
